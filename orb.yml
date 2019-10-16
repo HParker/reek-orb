@@ -26,7 +26,7 @@ commands:
     description: Run Reek
     parameters:
       options:
-        default:
+        default: ""
         description: CLI options
         type: string
     steps:
@@ -73,7 +73,7 @@ jobs:
         description: executor for reek
         type: executor
       options:
-        default:
+        default: ""
         description: CLI options
         type: string
       version:
