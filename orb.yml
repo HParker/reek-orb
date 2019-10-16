@@ -1,0 +1,88 @@
+# This code is licensed from CircleCI to the user under the MIT license. See
+# https://circleci.com/orbs/registry/licensing for details.
+version: 2.1
+description: |
+  Run Reek on your ruby code in an orb 🔮
+  Contribute at: https://github.com/HParker/reek-orb
+
+commands:
+  install-reek:
+    description: Install Reek
+    parameters:
+      version:
+        default: ""
+        description: Reek gem version
+        type: string
+    steps:
+    - run:
+        command: |
+          if [ -z "<< parameters.version >>" ]; then
+            gem install reek
+          else
+            gem install reek --version "<< parameters.version >>"
+          fi
+        name: Install Reek << parameters.version >>
+  run-reek:
+    description: Run Reek
+    parameters:
+      options:
+        default:
+        description: CLI options
+        type: string
+    steps:
+    - run: reek << parameters.options >>
+
+examples:
+  reek:
+    description: |
+      Run Reek
+    usage:
+      orbs:
+        reek: hparker/reek@x.y.z
+      version: 2.1
+      workflows:
+        test:
+          jobs:
+          - reek/reek
+        version: 2
+  reek-version:
+    description: |
+      Run specific version of Reek
+    usage:
+      orbs:
+        reek: hparker/reek@x.y.z
+      version: 2.1
+      workflows:
+        test:
+          jobs:
+          - reek/reek:
+              version: 2.12.1
+        version: 2
+
+executors:
+  ruby:
+    docker:
+    - image: rubylang/ruby:latest
+jobs:
+  reek:
+    description: Checkout code and run Reek
+    executor: << parameters.executor >>
+    parameters:
+      executor:
+        default: ruby
+        description: executor for reek
+        type: executor
+      options:
+        default:
+        description: CLI options
+        type: string
+      version:
+        default: ""
+        description: Reek version
+        type: string
+    steps:
+    - checkout
+    - install-reek:
+        version: << parameters.version >>
+    - run-reek:
+        options: << parameters.options >>
